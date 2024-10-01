@@ -1,11 +1,12 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../../Styles/MyPageLecture.css";
 import styled, { keyframes } from "styled-components";
 // API 엔드포인트
-const urlCurrent = "http://localhost:8080/user/current"; // 세션 조회
-const urlRegi = "http://localhost:8080/course/registration"; // 모든 강의등록 조회(All)
-const urlProgress = "http://localhost:8080/progress/getAllLectureProgress"; // 진도 조회
+const urlCurrent = "/user/current"; // 세션 조회
+const urlRegi = "/api/course/registration"; // 모든 강의등록 조회(All)
+const urlProgress = "/progress/getAllLectureProgress"; // 진도 조회
 
 const fadeIn = keyframes`
   from {
@@ -32,10 +33,18 @@ const UserLectureBox = styled.div`
 
 const UserEducationActivityTitle = styled.div`
     font-size: 26px;
-    font-family: 500;
+    font-weight: 800;
     margin-bottom: 30px;
     margin-left: 55px;
     color: #556b2f;
+`;
+
+const UserSummaryTitle = styled.div`
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    margin-left: 80px;
+    color: white;
 `;
 
 const GraphYAxisSpan = styled.span`
@@ -45,10 +54,84 @@ const GraphYAxisSpan = styled.span`
     color: white;
 `;
 
+const ButtonPrimary = styled.button`
+    background-color: #4a90e2; /* 청록색 */
+    color: #fff;
+    border: 2px solid #4a90e2;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+
+    &:hover {
+        background-color: transparent;
+        color: #4a90e2;
+    }
+`;
+
+const ButtonSecondary = styled.button`
+    background-color: #e94e77; /* 딥 핑크 */
+    color: #fff;
+    border: 2px solid #e94e77;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+
+    &:hover {
+        background-color: transparent;
+        color: #e94e77;
+    }
+`;
+
+const ButtonTertiary = styled.button`
+    background-color: #f5a623; /* 주황색 */
+    color: #fff;
+    border: 2px solid #f5a623;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+
+    &:hover {
+        background-color: transparent;
+        color: #f5a623;
+    }
+`;
+
+const ButtonNeutral = styled.button`
+    background-color: #7ed321; /* 연한 초록색 */
+    color: #fff;
+    border: 2px solid #7ed321;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: transparent;
+        color: #7ed321;
+    }
+`;
+
+const BtnBox = styled.div`
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+`;
+
 export function MyPageLecture() {
     const [userId, setUserId] = useState(null); // User ID 데이터
     const [lectureData, setLectureData] = useState([]); // 강의 상태별 Count 데이터
     const [currentTab, setCurrentTab] = useState("summary"); // summary, studying, cancel, complete
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -60,7 +143,7 @@ export function MyPageLecture() {
 
                 // window.alert("UserId: " + data.userId);
 
-                const lecData = `http://localhost:8080/course/lectureStatusCount/id/${data.userId}`;
+                const lecData = `/api/course/lectureStatusCount/id/${data.userId}`;
                 await fetchLectureData(lecData); // 강의 상태별 Count 조회 및 상태 저장
                 await userDataSet(lecData); // 강의 상태별 Count 조회 및 그래프 세팅
             } catch (error) {
@@ -233,7 +316,7 @@ export function MyPageLecture() {
                         classRoomBtn.addEventListener("click", () => {
                             const courseUserId = data.user.userId;
                             const courseLectureId = data.lecture.lectureId;
-                            // http://localhost:3000/course/test01/L00000000057
+                            // http://localhost:3000/api/course/test01/L00000000057
 
                             // 현재 URL에서 '/mypage/'를 제거
                             const baseUrl = window.location.href.replace(
@@ -242,7 +325,10 @@ export function MyPageLecture() {
                             );
 
                             // 새로운 경로로 변경
-                            window.location.href = `${baseUrl}/course/${courseUserId}/${courseLectureId}`;
+                            // window.location.href = `${baseUrl}/course/${courseUserId}/${courseLectureId}`;
+                            navigate(
+                                `/course/${courseUserId}/${courseLectureId}`
+                            );
                         });
 
                         document
@@ -327,7 +413,7 @@ export function MyPageLecture() {
                 document.getElementById(`lectureCancelBtn-${index}`).onclick =
                     function () {
                         if (window.confirm("해당 강좌를 삭제하시겠습니까?")) {
-                            const deleteUrl = `http://localhost:8080/course/delCourseRegistration/${data.user.userId}/${data.lecture.lectureId}`;
+                            const deleteUrl = `/api/course/delCourseRegistration/${data.user.userId}/${data.lecture.lectureId}`;
 
                             axios
                                 .delete(deleteUrl, { withCredentials: true })
@@ -407,7 +493,7 @@ export function MyPageLecture() {
         // window.alert("TabPage: " + tab);
 
         if (tab === "summary") {
-            const lecData = `http://localhost:8080/course/lectureStatusCount/id/${userId}`;
+            const lecData = `/api/course/lectureStatusCount/id/${userId}`;
             userDataSet(lecData); // 강의 상태별 Count 조회 및 그래프 세팅
         } else {
             // studying, cancel, complete
@@ -424,45 +510,36 @@ export function MyPageLecture() {
                         <UserEducationActivityTitle>
                             나의학습
                         </UserEducationActivityTitle>
-                        <div className="lectureMenuBox">
-                            <div
-                                className={`lecturemenu ${
-                                    currentTab === "summary" ? "active" : ""
-                                }`}
+                        <BtnBox>
+                            <ButtonPrimary
                                 onClick={() => handleTabClick("summary")}
                             >
                                 요약정보
-                            </div>
-                            <div
-                                className={`lecturemenu ${
-                                    currentTab === "studying" ? "active" : ""
-                                }`}
+                            </ButtonPrimary>
+                            <ButtonSecondary
                                 onClick={() => handleTabClick("studying")}
                             >
                                 학습중
-                            </div>
-                            <div
-                                className={`lecturemenu ${
-                                    currentTab === "cancel" ? "active" : ""
-                                }`}
+                            </ButtonSecondary>
+                            <ButtonTertiary
                                 onClick={() => handleTabClick("cancel")}
                             >
                                 수강취소
-                            </div>
-                            <div
-                                className={`lecturemenu ${
-                                    currentTab === "complete" ? "active" : ""
-                                }`}
+                            </ButtonTertiary>
+                            <ButtonNeutral
                                 onClick={() => handleTabClick("complete")}
                             >
                                 수강종료
-                            </div>
-                        </div>
+                            </ButtonNeutral>
+                        </BtnBox>
 
                         {currentTab === "summary" && (
                             <div className="userLectureGraphContainer">
+                                <UserSummaryTitle>
+                                    나의 학습활동
+                                </UserSummaryTitle>
                                 <div className="userLectureGraph">
-                                    <div className="userGraphSearchBar">
+                                    {/* <div className="userGraphSearchBar">
                                         <select
                                             id="userGraphSearchYears"
                                             required
@@ -473,7 +550,7 @@ export function MyPageLecture() {
                                             <option value="2024">2024</option>
                                         </select>
                                         <div id="userGraphSearchBtn">검색</div>
-                                    </div>
+                                    </div> */}
 
                                     <div className="userLectureGraphGraduations">
                                         {/* 그래프 눈금 */}
@@ -560,7 +637,7 @@ export function MyPageLecture() {
 
                         {currentTab === "cancel" && (
                             <div className="userLectureCancelContainer">
-                                <div className="userCancelLecSearchBarBorder">
+                                {/* <div className="userCancelLecSearchBarBorder">
                                     <div className="userCancelLecSearchBar">
                                         <select
                                             id="userCancelLecSearchYears"
@@ -575,7 +652,7 @@ export function MyPageLecture() {
                                             검색
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <div className="cancelList">
                                     <table className="cancel-table">
@@ -597,7 +674,7 @@ export function MyPageLecture() {
 
                         {currentTab === "complete" && (
                             <div className="userLectureCompleteContainer">
-                                <div className="userCompleteLecSearchBarBorder">
+                                {/* <div className="userCompleteLecSearchBarBorder">
                                     <div className="userCompleteLecSearchBar">
                                         <select required>
                                             <option value="" disabled selected>
@@ -609,7 +686,7 @@ export function MyPageLecture() {
                                             검색
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <div className="completelList">
                                     <table className="complete-table">

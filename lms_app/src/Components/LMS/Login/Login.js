@@ -110,7 +110,8 @@ const SginUpBtn = styled.p`
 const NavigateBtn = styled.button`
     width: 400px;
     height: 60px;
-    background: ${(props) => props.bgColor};
+    /* background: ${(props) => props.bgColor}; */
+    background: rgba(15, 16, 21, 0.5);
     font-size: 14px;
     font-weight: 500;
     font-stretch: normal;
@@ -131,11 +132,9 @@ export function Login({ onSignup }) {
     const handleLogin = async () => {
         try {
             const data = { userId, password };
-            const response = await axios.post(
-                "http://localhost:8080/user/login",
-                data,
-                { withCredentials: true }
-            );
+            const response = await axios.post("/user/login", data, {
+                withCredentials: true,
+            });
             if (response.status === 200) {
                 setLoginCurrent(true);
             }
@@ -159,7 +158,7 @@ export function Login({ onSignup }) {
                                 }}
                             >
                                 {" "}
-                                강의실 가기
+                                메타버스 들어가기
                             </NavigateBtn>
                             <NavigateBtn
                                 bgColor="#c1d3fc"

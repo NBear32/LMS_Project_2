@@ -18,6 +18,7 @@ import { getLectureStatusCountJPQL } from "../../Api/CourseApi/CourseApi";
 // import "https://use.fontawesome.com/releases/v5.6.1/css/all.css";
 
 import { CommunitySidebar } from "./Community/CommunitySidebar"; // CommunitySidebar 임포트
+import { useDropdown } from "../../Api/DropdownContext";
 
 const LeftSideContainer = styled.div`
     box-sizing: border-box;
@@ -64,7 +65,6 @@ const TextStyle = styled.p`
     font-weight: 700;
     color: #9da2b9;
     padding: 13px 0px 8px 8px;
-    border-left: 1px solid #1a1b24;
 `;
 
 const Group = styled.div`
@@ -72,70 +72,111 @@ const Group = styled.div`
     align-items: center;
     padding: 2px;
 `;
-
 export function LeftSidebar() {
     const navigate = useNavigate();
+    const dropdownContext = useDropdown();
 
-    // Community 관련 추가
-    const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] =
-        useState(false); // 드롭다운 상태 관리
-    const toggleCommunityDropdown = () => {
-        setIsCommunityDropdownOpen(!isCommunityDropdownOpen); // 드롭다운 상태 변경
-    };
+    if (!dropdownContext) {
+        console.error("DropdownContext가 제공되지 않았습니다.");
+        return null; // Context가 제공되지 않으면 아무것도 렌더링하지 않음
+    }
+
+    const { isCommunityDropdownOpen, toggleCommunityDropdown } =
+        dropdownContext;
 
     return (
-        <>
-            <LeftSideContainer>
-                <SideManu>
-                    <SideLogo>
-                        <Logo
-                            src="/reactimage/logo.png"
-                            onClick={() => navigate("/index")}
-                        ></Logo>
-                    </SideLogo>
-                    <SideItem>
-                        <SideContant onClick={() => navigate("/lecture")}>
-                            <Group>
-                                <BookIcon></BookIcon>
-                                <TextStyle>강의보기</TextStyle>
-                            </Group>
-                        </SideContant>
-                        {/* <SideContant
-                            onClick={() => navigate("/community/notices")}
-                        >
-                            <Group>
-                                <UserIcon></UserIcon>
-                                <TextStyle>커뮤니티</TextStyle>
-                            </Group>
-                        </SideContant> */}
-                        <SideContant onClick={toggleCommunityDropdown}>
-                            {" "}
-                            {/* 드롭다운 토글 */}
-                            <Group>
-                                <UserIcon></UserIcon>
-                                <TextStyle>커뮤니티</TextStyle>
-                            </Group>
-                        </SideContant>
-                        {isCommunityDropdownOpen && <CommunitySidebar />}{" "}
-                        {/* 드롭다운 상태에 따라 CommunitySidebar 표시 */}
-                        <SideContant onClick={() => navigate("/home")}>
-                            <Group>
-                                <GameIcon></GameIcon>
-                                <TextStyle>게임하기</TextStyle>
-                            </Group>
-                        </SideContant>
-                        <SideContant onClick={() => navigate("/chatroom")}>
-                            <Group>
-                                <ChatroomIcon></ChatroomIcon>
-                                <TextStyle>체팅룸</TextStyle>
-                            </Group>
-                        </SideContant>
-                    </SideItem>
-                </SideManu>
-            </LeftSideContainer>
-        </>
+        <LeftSideContainer>
+            <SideManu>
+                <SideLogo>
+                    <Logo
+                        src="/reactimage/logo_origin.png"
+                        onClick={() => navigate("/index")}
+                    />
+                </SideLogo>
+                <SideItem>
+                    <SideContant onClick={() => navigate("/lecture")}>
+                        <Group>
+                            <BookIcon />
+                            <TextStyle>강의보기</TextStyle>
+                        </Group>
+                    </SideContant>
+                    <SideContant onClick={toggleCommunityDropdown}>
+                        <Group>
+                            <UserIcon />
+                            <TextStyle>커뮤니티</TextStyle>
+                        </Group>
+                    </SideContant>
+                    {isCommunityDropdownOpen && <CommunitySidebar />}
+                    <SideContant onClick={() => navigate("/home")}>
+                        <Group>
+                            <GameIcon />
+                            <TextStyle>메타버스</TextStyle>
+                        </Group>
+                    </SideContant>
+                    <SideContant onClick={() => navigate("/chatroom")}>
+                        <Group>
+                            <ChatroomIcon />
+                            <TextStyle>채팅룸</TextStyle>
+                        </Group>
+                    </SideContant>
+                </SideItem>
+            </SideManu>
+        </LeftSideContainer>
     );
 }
+// export function LeftSidebar() {
+//   const navigate = useNavigate();
+
+//   // Community 관련 추가
+//   const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false); // 드롭다운 상태 관리
+//   const toggleCommunityDropdown = () => {
+//     setIsCommunityDropdownOpen(!isCommunityDropdownOpen); // 드롭다운 상태 변경
+//   };
+
+//   return (
+//     <>
+//       <LeftSideContainer>
+//         <SideManu>
+//           <SideLogo>
+//             <Logo
+//               src="/reactimage/logo_origin.png"
+//               onClick={() => navigate("/index")}
+//             ></Logo>
+//           </SideLogo>
+//           <SideItem>
+//             <SideContant onClick={() => navigate("/lecture")}>
+//               <Group>
+//                 <BookIcon></BookIcon>
+//                 <TextStyle>강의보기</TextStyle>
+//               </Group>
+//             </SideContant>
+//             <SideContant onClick={toggleCommunityDropdown}>
+//               {/* 드롭다운 토글 */}
+//               <Group>
+//                 <UserIcon></UserIcon>
+//                 <TextStyle>커뮤니티</TextStyle>
+//               </Group>
+//             </SideContant>
+//             {isCommunityDropdownOpen && <CommunitySidebar />}
+//             {/* 드롭다운 상태에 따라 CommunitySidebar 표시 */}
+//             <SideContant onClick={() => navigate("/home")}>
+//               <Group>
+//                 <GameIcon></GameIcon>
+//                 <TextStyle>게임하기</TextStyle>
+//               </Group>
+//             </SideContant>
+//             <SideContant onClick={() => navigate("/chatroom")}>
+//               <Group>
+//                 <ChatroomIcon></ChatroomIcon>
+//                 <TextStyle>채팅룸</TextStyle>
+//               </Group>
+//             </SideContant>
+//           </SideItem>
+//         </SideManu>
+//       </LeftSideContainer>
+//     </>
+//   );
+// }
 
 /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -228,7 +269,7 @@ export function RightSidebar() {
             console.log("User Id Error", error);
         }
     }
-    console.log(count);
+    console.log(session);
 
     return (
         <>

@@ -79,17 +79,18 @@ export function Navbar() {
         }
     }
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
     const handleLogout = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:8080/user/logout",
+                "/user/logout",
                 {},
                 { withCredentials: true }
             );
             if (response.status === 200) {
                 setIsAuthenticated(false);
 
-                window.location.href = "login";
+                window.location.href = "/login";
             }
         } catch (error) {
             console.log("Logout error:", error);
